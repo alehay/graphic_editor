@@ -1,4 +1,3 @@
-
 import 'dart:async';
 import 'dart:ffi';
 import 'package:ffi/ffi.dart';
@@ -7,6 +6,8 @@ import 'dart:io';
 import 'dart:isolate';
 
 import 'graphics_bindings_generated.dart';
+import 'dart:ffi' as ffi;
+import 'dart:ui' as ui;
 
 /// A very short-lived native function.
 ///
@@ -53,7 +54,6 @@ final DynamicLibrary _dylib = () {
 
 /// The bindings to the native functions in [_dylib].
 final GraphicsBindings _bindings = GraphicsBindings(_dylib);
-
 
 /// A request to compute `sum`.
 ///
@@ -132,12 +132,18 @@ Future<SendPort> _helperIsolateSendPort = () async {
   return completer.future;
 }();
 
+typedef Dprocess_image = int Function(Pointer<Utf8>);
+typedef Cprocess_image = Uint8 Function(Pointer<Utf8>);
 
+final Dprocess_image processImage =
+    _dylib.lookup<NativeFunction<Cprocess_image>>("process_image").asFunction();
 
-typedef Dprocess_image  = int Function(Pointer<Utf8>);
-typedef Cprocess_image  = Uint8 Function(Pointer<Utf8>);
+typedef DProcessImageWithPoints = int Function(
+    Pointer<Utf8>, Pointer<Float>, int);
+typedef CProcessImageWithPoints = Uint8 Function(
+    Pointer<Utf8>, Pointer<Float>, Int32);
 
-final Dprocess_image  processImage =
-_dylib
-    .lookup<NativeFunction<Cprocess_image>>("process_image")
+final DProcessImageWithPoints processImageWithPoints = _dylib
+    .lookup<NativeFunction<CProcessImageWithPoints>>(
+        "process_image_with_points")
     .asFunction();

@@ -44,4 +44,29 @@ extern "C"
 
     return 0;
   }
+
+  FFI_PLUGIN_EXPORT int process_image_with_points(const char *image_path, const float *points, int num_points)
+  {
+    cv::Mat image = cv::imread(image_path, cv::IMREAD_COLOR);
+    if (image.empty())
+    {
+      std::cerr << "Could not open or find the image" << std::endl;
+      return 1;
+    }
+
+    // Convert points to a vector of cv::Point
+    std::vector<cv::Point> cv_points;
+    for (int i = 0; i < num_points; i++)
+    {
+      cv_points.push_back(cv::Point(points[i * 2], points[i * 2 + 1]));
+    }
+
+    // Example processing: Draw a polygon around the points
+    cv::polylines(image, cv_points, true, cv::Scalar(0, 255, 0), 2);
+
+    // Save the processed image
+    cv::imwrite(image_path, image);
+
+    return 0;
+  }
 }
