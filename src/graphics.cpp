@@ -1,7 +1,6 @@
 #include "graphics.hpp"
 #include <opencv2/opencv.hpp>
 
-
 extern "C"
 {
   // A very short-lived native function.
@@ -27,11 +26,13 @@ extern "C"
     return a + b;
   }
 
- FFI_PLUGIN_EXPORT int process_image(const char* image_path) {
+  FFI_PLUGIN_EXPORT int process_image(const char *image_path)
+  {
     cv::Mat image = cv::imread(image_path, cv::IMREAD_COLOR);
-    if (image.empty()) {
-        std::cerr << "Could not open or find the image" << std::endl;
-        return 1;
+    if (image.empty())
+    {
+      std::cerr << "Could not open or find the image" << std::endl;
+      return 1;
     }
 
     // Example processing: Convert to grayscale
@@ -39,14 +40,8 @@ extern "C"
     cv::cvtColor(image, gray_image, cv::COLOR_BGR2GRAY);
 
     // Save the processed image
-    cv::imwrite("processed_image.jpg", gray_image);
+    cv::imwrite(image_path, gray_image);
 
     return 0;
+  }
 }
-
-
-
-
-}
-
-

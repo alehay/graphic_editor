@@ -30,18 +30,24 @@ class _MyAppState extends State<MyApp> {
     final pickedFile = await _picker.pickImage(source: source);
     if (pickedFile != null) {
       final imageFile = File(pickedFile.path);
-      final processedImagePath = await _processImage(imageFile);
+      final tempDir = await getTemporaryDirectory();
+      final copyImagePath = '${tempDir.path}/copy_image.jpg';
+
+      // Copy the image to the new location
+      final copiedImage = await imageFile.copy(copyImagePath);
+
       setState(() {
-        _image = File(processedImagePath);
+        _image = copiedImage;
       });
     }
   }
 
-  Future<String> _processImage(File imageFile) async {
+  Future<void> _processImage() async {
     final tempDir = await getTemporaryDirectory();
     final processedImagePath = '${tempDir.path}/processed_image.jpg';
+    final processImage = await _image!.copy(processedImagePath);
 
-    final imagePathPointer = imageFile.path.toNativeUtf8();
+    final imagePathPointer = processImage.path.toNativeUtf8();
     final result = graphics.processImage(imagePathPointer);
     calloc.free(imagePathPointer);
 
@@ -49,7 +55,9 @@ class _MyAppState extends State<MyApp> {
       throw Exception('Image processing failed');
     }
 
-    return processedImagePath;
+    setState(() {
+      _image = processImage;
+    });
   }
 
   @override
@@ -76,6 +84,10 @@ class _MyAppState extends State<MyApp> {
               ElevatedButton(
                 onPressed: () => _pickImage(ImageSource.camera),
                 child: const Text('Pick Image from Camera'),
+              ),
+              ElevatedButton(
+                onPressed: () => _processImage(),
+                child: const Text('gray scale image'),
               ),
             ],
           ),
