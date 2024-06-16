@@ -1,6 +1,8 @@
 
 import 'dart:async';
 import 'dart:ffi';
+import 'package:ffi/ffi.dart';
+
 import 'dart:io';
 import 'dart:isolate';
 
@@ -129,3 +131,13 @@ Future<SendPort> _helperIsolateSendPort = () async {
   // can start sending requests.
   return completer.future;
 }();
+
+
+
+typedef Dprocess_image  = int Function(Pointer<Utf8>);
+typedef Cprocess_image  = Uint8 Function(Pointer<Utf8>);
+
+final Dprocess_image  processImage =
+_dylib
+    .lookup<NativeFunction<Cprocess_image>>("process_image")
+    .asFunction();

@@ -6,12 +6,16 @@ cmake_minimum_required(VERSION 3.10)
 project(graphics_library VERSION 0.0.1 LANGUAGES C)
 
 add_library(graphics SHARED
-  "graphics.c"
+  "graphics.cpp"
 )
 
 set_target_properties(graphics PROPERTIES
-  PUBLIC_HEADER graphics.h
+  PUBLIC_HEADER graphics.hpp
   OUTPUT_NAME "graphics"
 )
 
 target_compile_definitions(graphics PUBLIC DART_SHARED_LIB)
+
+find_package( OpenCV REQUIRED )
+include_directories( ${OpenCV_INCLUDE_DIRS} )
+target_link_libraries( graphics ${OpenCV_LIBS} )
