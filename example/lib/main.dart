@@ -1,5 +1,13 @@
 import 'package:flutter/material.dart';
+
+import 'package:image_picker/image_picker.dart';
+import 'package:path_provider/path_provider.dart';
 import 'dart:async';
+import 'package:flutter/material.dart';
+import 'package:file_picker/file_picker.dart';
+import 'dart:ffi';
+import 'dart:io';
+import 'package:ffi/ffi.dart';
 
 import 'package:graphics/graphics.dart' as graphics;
 
@@ -15,57 +23,61 @@ class MyApp extends StatefulWidget {
 }
 
 class _MyAppState extends State<MyApp> {
-  late int sumResult;
-  late Future<int> sumAsyncResult;
+  File? _image;
+  final ImagePicker _picker = ImagePicker();
 
-  @override
-  void initState() {
-    super.initState();
-    sumResult = graphics.sum(1, 2);
-    sumAsyncResult = graphics.sumAsync(3, 4);
+  Future<void> _pickImage(ImageSource source) async {
+    final pickedFile = await _picker.pickImage(source: source);
+    if (pickedFile != null) {
+      final imageFile = File(pickedFile.path);
+      final processedImagePath = await _processImage(imageFile);
+      setState(() {
+        _image = File(processedImagePath);
+      });
+    }
+  }
+
+  Future<String> _processImage(File imageFile) async {
+    final tempDir = await getTemporaryDirectory();
+    final processedImagePath = '${tempDir.path}/processed_image.jpg';
+
+    final imagePathPointer = imageFile.path.toNativeUtf8();
+    final result = graphics.processImage(imagePathPointer);
+    calloc.free(imagePathPointer);
+
+    if (result != 0) {
+      throw Exception('Image processing failed');
+    }
+
+    return processedImagePath;
   }
 
   @override
   Widget build(BuildContext context) {
-    const textStyle = TextStyle(fontSize: 25);
-    const spacerSmall = SizedBox(height: 10);
     return MaterialApp(
       home: Scaffold(
         appBar: AppBar(
-          title: const Text('Native Packages'),
+          title: const Text('Image Processing with FFI'),
         ),
-        body: SingleChildScrollView(
-          child: Container(
-            padding: const EdgeInsets.all(10),
-            child: Column(
-              children: [
-                const Text(
-                  'This calls a native function through FFI that is shipped as source in the package. '
-                  'The native code is built as part of the Flutter Runner build.',
-                  style: textStyle,
-                  textAlign: TextAlign.center,
-                ),
-                spacerSmall,
-                Text(
-                  'sum(1, 2) = $sumResult',
-                  style: textStyle,
-                  textAlign: TextAlign.center,
-                ),
-                spacerSmall,
-                FutureBuilder<int>(
-                  future: sumAsyncResult,
-                  builder: (BuildContext context, AsyncSnapshot<int> value) {
-                    final displayValue =
-                        (value.hasData) ? value.data : 'loading';
-                    return Text(
-                      'await sumAsync(3, 4) = $displayValue',
-                      style: textStyle,
-                      textAlign: TextAlign.center,
-                    );
-                  },
-                ),
-              ],
-            ),
+        body: Center(
+          child: Column(
+            mainAxisAlignment: MainAxisAlignment.center,
+            children: <Widget>[
+              if (_image != null)
+                Image.file(_image!)
+              else
+                const Text('No image selected.'),
+              const SizedBox(height: 20),
+              ElevatedButton(
+                onPressed: () => _pickImage(ImageSource.gallery),
+                child: const Text('Pick Image from Gallery'),
+              ),
+              const SizedBox(height: 10),
+              ElevatedButton(
+                onPressed: () => _pickImage(ImageSource.camera),
+                child: const Text('Pick Image from Camera'),
+              ),
+            ],
           ),
         ),
       ),
