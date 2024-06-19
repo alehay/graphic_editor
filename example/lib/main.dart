@@ -13,6 +13,7 @@ import 'package:image_size_getter/file_input.dart';
 import 'package:full_screen_image/full_screen_image.dart';
 
 void main() {
+  int res = graphics.libGraphInit();
   runApp(const MyApp());
 }
 
@@ -108,7 +109,7 @@ class _MyAppState extends State<MyApp> {
       throw Exception('Image processing failed');
     }
     setState(() {
-      _image = processImage;
+       _image = processImage;
       _points.clear();
     });
   }

@@ -132,6 +132,13 @@ Future<SendPort> _helperIsolateSendPort = () async {
   return completer.future;
 }();
 
+typedef DlibGraphInit = int Function();
+typedef ClibGraphInit = Uint8 Function();
+
+final DlibGraphInit libGraphInit =
+_dylib.lookup<NativeFunction<ClibGraphInit>>("init").asFunction();
+
+
 typedef Dprocess_image = int Function(Pointer<Utf8>);
 typedef Cprocess_image = Uint8 Function(Pointer<Utf8>);
 
