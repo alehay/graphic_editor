@@ -144,6 +144,14 @@ packages:
     description: flutter
     source: sdk
     version: "0.0.0"
+  full_screen_image:
+    dependency: transitive
+    description:
+      name: full_screen_image
+      sha256: "97831b00d07b17c674ba3a4eddcee306dbd0d7c66851f1b67856e12daeb9b3aa"
+      url: "https://pub.dev"
+    source: hosted
+    version: "2.0.0"
   graphics:
     dependency: "direct main"
     description:
@@ -151,6 +159,14 @@ packages:
       relative: true
     source: path
     version: "0.0.1"
+  hashcodes:
+    dependency: transitive
+    description:
+      name: hashcodes
+      sha256: "80f9410a5b3c8e110c4b7604546034749259f5d6dcca63e0d3c17c9258f1a651"
+      url: "https://pub.dev"
+    source: hosted
+    version: "2.0.0"
   http:
     dependency: transitive
     description:
@@ -231,6 +247,14 @@ packages:
       url: "https://pub.dev"
     source: hosted
     version: "0.2.1+1"
+  image_size_getter:
+    dependency: transitive
+    description:
+      name: image_size_getter
+      sha256: "414ebd27e9967fa7adbcf4a10c8409522faa6f98c87e3e54d2c423db8ad75320"
+      url: "https://pub.dev"
+    source: hosted
+    version: "1.1.0"
   leak_tracker:
     dependency: transitive
     description:
