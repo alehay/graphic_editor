@@ -66,11 +66,11 @@ extern "C"
 
   FFI_PLUGIN_EXPORT int process_image_with_points(const char *image_path, const float *points, int num_points)
   {
-      LOG(INFO) << "input path " << image_path << std::endl;
+    LOG(INFO) << "input path " << image_path << std::endl;
     cv::Mat image = cv::imread(image_path, cv::IMREAD_COLOR);
     if (image.empty())
     {
-      std::cerr << "Could not open or find the image" << std::endl;
+       LOG(INFO) <<  "Could not open or find the image" << std::endl;
       return 1;
     }
 
