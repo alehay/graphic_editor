@@ -31,6 +31,7 @@ dependencies:
   flutter:
     sdk: flutter
   image_picker: ^0.8.2
+  gallery_saver: ^2.3.2
 
   graphics:
     # When depending on this package from a real application you should use:

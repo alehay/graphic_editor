@@ -13,6 +13,8 @@ import 'package:image_size_getter/file_input.dart';
 import 'package:full_screen_image/full_screen_image.dart';
 import 'dart:math';
 import 'package:flutter_cache_manager/flutter_cache_manager.dart';
+import 'package:gallery_saver/gallery_saver.dart';
+
 
 void main() {
   int res = graphics.libGraphInit();
@@ -48,6 +50,19 @@ class PointPainter extends CustomPainter {
     return true;
   }
 }
+
+
+Future<void> saveImage(File file) async {
+  // Save to gallery
+  final result = await GallerySaver.saveImage(file.path);
+
+  if (result != null && result) {
+    print("Image saved to gallery successfully");
+  } else {
+    print("Failed to save image to gallery");
+  }
+}
+
 
 class _MyAppState extends State<MyApp> {
   File? _image;
@@ -161,7 +176,7 @@ class _MyAppState extends State<MyApp> {
               },
             ),
             IconButton(
-              icon: const Icon(Icons.save),
+              icon: const Icon(Icons.refresh),
               onPressed: _processImage,
             ),
             IconButton(
@@ -172,6 +187,10 @@ class _MyAppState extends State<MyApp> {
             IconButton(
               onPressed: () => _pickImage(ImageSource.camera),
               icon: const Icon(Icons.camera),
+            ),
+            IconButton(
+              icon: const Icon(Icons.save),
+              onPressed: () => saveImage(_image!),
             ),
 
 
@@ -210,9 +229,11 @@ class _MyAppState extends State<MyApp> {
                 value: 'submenu1',
                 child: SubmenuButton(
                   menuStyle: MenuStyle(
-                    padding: MaterialStateProperty.all(EdgeInsets.zero),
+                    padding: MaterialStateProperty.all(
+                      EdgeInsets.symmetric(horizontal: 24, vertical: 12),
+                    ),
                   ),
-                  child: Icon(Icons.menu),
+                  child: Icon(Icons.satellite),
                   menuChildren: [
                     MenuItemButton(
                       style: ButtonStyle(
