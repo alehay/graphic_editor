@@ -15,7 +15,6 @@ import 'dart:math';
 import 'package:flutter_cache_manager/flutter_cache_manager.dart';
 import 'package:gallery_saver/gallery_saver.dart';
 
-
 void main() {
   int res = graphics.libGraphInit();
   runApp(const MyApp());
@@ -36,7 +35,7 @@ class PointPainter extends CustomPainter {
   @override
   void paint(Canvas canvas, ui.Size size) {
     final paint = Paint()
-      ..color = Colors.red
+      ..color = Colors.green
       ..strokeCap = StrokeCap.round
       ..strokeWidth = 3.0;
 
@@ -51,7 +50,6 @@ class PointPainter extends CustomPainter {
   }
 }
 
-
 Future<void> saveImage(File file) async {
   // Save to gallery
   final result = await GallerySaver.saveImage(file.path);
@@ -62,7 +60,6 @@ Future<void> saveImage(File file) async {
     print("Failed to save image to gallery");
   }
 }
-
 
 class _MyAppState extends State<MyApp> {
   File? _image;
@@ -126,7 +123,7 @@ class _MyAppState extends State<MyApp> {
         length, (_) => chars.codeUnitAt(random.nextInt(chars.length))));
   }
 
-  Future<void> _processImage() async {
+  Future<void> _processImage(String key) async {
     final tempDir = await getTemporaryDirectory();
     final randomName =
         _generateRandomName(10); // Generate a 10 character random name
@@ -135,8 +132,18 @@ class _MyAppState extends State<MyApp> {
 
     final imagePathPointer = processImage.path.toNativeUtf8();
     final pointsPointer = _convertPointsToNative(_points);
-    final result = graphics.processImageWithPoints(
-        imagePathPointer, pointsPointer, _points.length);
+
+    int result = -1;
+    if (key == "GRAY") {
+      print("gray scale start");
+      result = graphics.processImageWithPointsGrayScale(
+          imagePathPointer, pointsPointer, _points.length);
+    }
+
+    if (key == "DRAW") {
+      result = graphics.processImageWithPoints(
+          imagePathPointer, pointsPointer, _points.length);
+    }
     calloc.free(imagePathPointer);
     calloc.free(pointsPointer);
     final temp = _image!;
@@ -177,7 +184,7 @@ class _MyAppState extends State<MyApp> {
             ),
             IconButton(
               icon: const Icon(Icons.refresh),
-              onPressed: _processImage,
+              onPressed: () => _processImage("DRAW"),
             ),
             IconButton(
               onPressed: () => _pickImage(ImageSource.gallery),
@@ -192,8 +199,6 @@ class _MyAppState extends State<MyApp> {
               icon: const Icon(Icons.save),
               onPressed: () => saveImage(_image!),
             ),
-
-
           ],
         ),
         body: Center(
@@ -244,6 +249,54 @@ class _MyAppState extends State<MyApp> {
                         children: [
                           Icon(Icons.star, size: 20),
                           SizedBox(width: 8),
+                          Text('gray_scale'),
+                        ],
+                      ),
+                      onPressed: () {
+                        _processImage("GRAY");
+                      },
+                    ),
+                    MenuItemButton(
+                      style: ButtonStyle(
+                        padding: MaterialStateProperty.all(EdgeInsets.zero),
+                      ),
+                      child: Row(
+                        mainAxisSize: MainAxisSize.min,
+                        children: [
+                          Icon(Icons.star, size: 20),
+                          SizedBox(width: 8),
+                          Text('Option 1.2'),
+                        ],
+                      ),
+                      onPressed: () {
+                        // Handle Option 1.2
+                      },
+                    ),
+                  ],
+                ),
+              ),
+
+              SizedBox(height: 6), // Add some spacing between the buttons
+
+              DropdownMenuItem<String>(
+                value: 'submenu1',
+                child: SubmenuButton(
+                  menuStyle: MenuStyle(
+                    padding: MaterialStateProperty.all(
+                      EdgeInsets.symmetric(horizontal: 24, vertical: 12),
+                    ),
+                  ),
+                  child: Icon(Icons.satellite),
+                  menuChildren: [
+                    MenuItemButton(
+                      style: ButtonStyle(
+                        padding: MaterialStateProperty.all(EdgeInsets.zero),
+                      ),
+                      child: Row(
+                        mainAxisSize: MainAxisSize.min,
+                        children: [
+                          Icon(Icons.star, size: 20),
+                          SizedBox(width: 8),
                           Text('Option 1.1'),
                         ],
                       ),
@@ -267,19 +320,6 @@ class _MyAppState extends State<MyApp> {
                         // Handle Option 1.2
                       },
                     ),
-                  ],
-                ),
-              ),
-              SizedBox(height: 8), // Add some spacing between the buttons
-              DropdownMenuItem<String>(
-                value: 'submenu2',
-                child: SubmenuButton(
-                  menuStyle: MenuStyle(
-                    padding: MaterialStateProperty.all(EdgeInsets.zero),
-                  ),
-                  child: Icon(Icons.menu),
-                  menuChildren: [
-                    // ... (similar modifications for submenu2)
                   ],
                 ),
               ),

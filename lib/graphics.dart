@@ -6,8 +6,6 @@ import 'dart:io';
 import 'dart:isolate';
 
 import 'graphics_bindings_generated.dart';
-import 'dart:ffi' as ffi;
-import 'dart:ui' as ui;
 
 /// A very short-lived native function.
 ///
@@ -136,8 +134,7 @@ typedef DlibGraphInit = int Function();
 typedef ClibGraphInit = Uint8 Function();
 
 final DlibGraphInit libGraphInit =
-_dylib.lookup<NativeFunction<ClibGraphInit>>("init").asFunction();
-
+    _dylib.lookup<NativeFunction<ClibGraphInit>>("init").asFunction();
 
 typedef Dprocess_image = int Function(Pointer<Utf8>);
 typedef Cprocess_image = Uint8 Function(Pointer<Utf8>);
@@ -153,4 +150,14 @@ typedef CProcessImageWithPoints = Uint8 Function(
 final DProcessImageWithPoints processImageWithPoints = _dylib
     .lookup<NativeFunction<CProcessImageWithPoints>>(
         "process_image_with_points")
+    .asFunction();
+
+typedef DProcessImageWithPointsGrayScale = int Function(
+    Pointer<Utf8>, Pointer<Float>, int);
+typedef CProcessImageWithPointsGrayScale = Uint8 Function(
+    Pointer<Utf8>, Pointer<Float>, Int32);
+
+final DProcessImageWithPointsGrayScale processImageWithPointsGrayScale = _dylib
+    .lookup<NativeFunction<CProcessImageWithPointsGrayScale>>(
+        "process_image_gray_scale")
     .asFunction();

@@ -27,10 +27,11 @@ extern "C"
     return a + b;
   }
 
-    FFI_PLUGIN_EXPORT int init()
+  FFI_PLUGIN_EXPORT int init()
   {
 
-     AixLog::Severity aix_log_level =AixLog::Severity::info;;
+    AixLog::Severity aix_log_level = AixLog::Severity::info;
+    ;
 
     auto cout_sink = std::make_shared<AixLog::SinkCout>(
         aix_log_level,
@@ -42,7 +43,6 @@ extern "C"
     AixLog::Log::init({cout_sink, native});
 
     return 0;
-
   }
 
   FFI_PLUGIN_EXPORT int process_image(const char *image_path)
@@ -70,7 +70,7 @@ extern "C"
     cv::Mat image = cv::imread(image_path, cv::IMREAD_COLOR);
     if (image.empty())
     {
-       LOG(INFO) <<  "Could not open or find the image" << std::endl;
+      LOG(INFO) << "Could not open or find the image" << std::endl;
       return 1;
     }
 
@@ -88,6 +88,49 @@ extern "C"
     cv::imwrite(image_path, image);
 
     LOG(INFO) << "process image done!" << std::endl;
+
+    return 0;
+  }
+
+  FFI_PLUGIN_EXPORT int process_image_gray_scale(const char *image_path, const float *points, int num_points)
+  {
+
+    LOG(INFO) << "process_image_gray_scale " << std::endl;
+    cv::Mat image = cv::imread(image_path, cv::IMREAD_COLOR);
+    if (image.empty())
+    {
+      std::cerr << "Could not open or find the image" << std::endl;
+      return 1;
+    }
+
+    // Convert points to a vector of cv::Point
+    std::vector<cv::Point> cv_points;
+    for (int i = 0; i < num_points; i++)
+    {
+      cv_points.push_back(cv::Point(points[i * 2], points[i * 2 + 1]));
+    }
+
+    // Create a mask using the polygon defined by the points
+    cv::Mat mask = cv::Mat::zeros(image.size(), CV_8UC1);
+    cv::fillPoly(mask, std::vector<std::vector<cv::Point>>{cv_points}, cv::Scalar(255));
+
+    // Convert the image to grayscale
+    cv::Mat gray_image;
+    cv::cvtColor(image, gray_image, cv::COLOR_BGR2GRAY);
+
+    // Convert grayscale back to BGR for blending
+    cv::Mat gray_bgr;
+    cv::cvtColor(gray_image, gray_bgr, cv::COLOR_GRAY2BGR);
+
+    // Blend the original image and the grayscale image using the mask
+    cv::Mat result;
+    image.copyTo(result);
+    gray_bgr.copyTo(result, mask);
+
+    // Save the processed image
+    cv::imwrite(image_path, result);
+
+    LOG(INFO) << "Process image done!" << std::endl;
 
     return 0;
   }
