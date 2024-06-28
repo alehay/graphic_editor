@@ -29,18 +29,19 @@ class MyApp extends StatefulWidget {
 
 class PointPainter extends CustomPainter {
   final List<Offset> points;
+  final double scale;
 
-  PointPainter(this.points);
+  PointPainter(this.points, this.scale);
 
   @override
   void paint(Canvas canvas, ui.Size size) {
     final paint = Paint()
       ..color = Colors.green
       ..strokeCap = StrokeCap.round
-      ..strokeWidth = 3.0;
+      ..strokeWidth = 3.0 / scale;
 
-    for (var point in points) {
-      canvas.drawCircle(point, 3.0, paint);
+    for (int i = 0; i < points.length - 1; i++) {
+      canvas.drawLine(points[i] * scale, points[i + 1] * scale, paint);
     }
   }
 
@@ -70,6 +71,10 @@ class _MyAppState extends State<MyApp> {
   double _scaleHeight = 1;
   bool _isDrawing = false; // State variable to track drawing mode
 
+  double _scale = 1.0;
+  final TransformationController _transformationController =
+  TransformationController();
+
   Future<void> _pickImage(ImageSource source) async {
     var appDir = (await getTemporaryDirectory()).path;
     new Directory(appDir).delete(recursive: true);
@@ -93,13 +98,15 @@ class _MyAppState extends State<MyApp> {
       print("scale img = ${scale_img}");
 
       if (scale_img < 1.0) {
-        scale_img == 1.0;
+        scale_img = 1.0;
       }
 
       setState(() {
         _image = copiedImage;
         _scaleWidth = scale_img;
       });
+
+      _resetZoom();
     }
   }
 
@@ -107,6 +114,35 @@ class _MyAppState extends State<MyApp> {
     setState(() {
       _points.add(point);
     });
+  }
+
+  void _resetZoom() {
+    _transformationController.value = Matrix4.identity();
+    setState(() {
+      _scale = 1.0;
+    });
+  }
+
+  void _zoomOut() {
+    final currentScale = _transformationController.value.getMaxScaleOnAxis();
+    if (currentScale > 0.5) {
+      _transformationController.value =
+          _transformationController.value.scaled(0.8);
+      setState(() {
+        _scale = currentScale * 0.8;
+      });
+    }
+  }
+
+  void _zoomIn() {
+    final currentScale = _transformationController.value.getMaxScaleOnAxis();
+    if (currentScale < 4.0) {
+      _transformationController.value =
+          _transformationController.value.scaled(1.2);
+      setState(() {
+        _scale = currentScale * 1.2;
+      });
+    }
   }
 
   @override
@@ -126,7 +162,7 @@ class _MyAppState extends State<MyApp> {
   Future<void> _processImage(String key) async {
     final tempDir = await getTemporaryDirectory();
     final randomName =
-        _generateRandomName(10); // Generate a 10 character random name
+    _generateRandomName(10); // Generate a 10 character random name
     final processedImagePath = '${tempDir.path}/$randomName.jpg';
     final processImage = await _image!.copy(processedImagePath);
 
@@ -135,7 +171,6 @@ class _MyAppState extends State<MyApp> {
 
     int result = -1;
     if (key == "GRAY") {
-      print("gray scale start");
       result = graphics.processImageWithPointsGrayScale(
           imagePathPointer, pointsPointer, _points.length);
     }
@@ -202,34 +237,59 @@ class _MyAppState extends State<MyApp> {
           ],
         ),
         body: Center(
-          child: GestureDetector(
-            onPanUpdate: (details) {
-              if (_isDrawing) {
-                RenderBox renderBox = context.findRenderObject() as RenderBox;
-                Offset localPosition =
-                    renderBox.globalToLocal(details.localPosition);
-                _addPoint(localPosition);
-              }
+          child: InteractiveViewer(
+            transformationController: _transformationController,
+            boundaryMargin: EdgeInsets.all(20.0),
+            minScale: 0.5,
+            maxScale: 4.0,
+            scaleEnabled: true,
+            panEnabled: true,
+            onInteractionUpdate: (details) {
+              setState(() {
+                _scale = _transformationController.value.getMaxScaleOnAxis();
+              });
             },
-            child: Stack(
-              children: [
-                if (_image != null)
-                  Image.file(_image!, key: _imageKey)
-                else
-                  const Text('No image selected.'),
-                CustomPaint(
-                  painter: PointPainter(_points),
-                  child: Container(),
-                ),
-              ],
+            child: GestureDetector(
+              onPanUpdate: (details) {
+                if (_isDrawing) {
+                  RenderBox renderBox = context.findRenderObject() as RenderBox;
+                  Offset localPosition =
+                  renderBox.globalToLocal(details.localPosition);
+                  _addPoint(localPosition / _scale);
+                }
+              },
+              child: Stack(
+                children: [
+                  if (_image != null)
+                    Image.file(_image!, key: _imageKey, fit: BoxFit.contain)
+                  else
+                    const Text('No image selected.'),
+                  CustomPaint(
+                    painter: PointPainter(_points, _scale),
+                    size: MediaQuery.of(context).size,
+                  ),
+                ],
+              ),
             ),
           ),
         ),
         floatingActionButton: SizedBox(
-          width: 56, // Standard size of a FloatingActionButton
+          width: 56,
           child: Column(
             mainAxisAlignment: MainAxisAlignment.end,
             children: [
+              IconButton(
+                icon: const Icon(Icons.zoom_out_map),
+                onPressed: _resetZoom,
+              ),
+              IconButton(
+                icon: const Icon(Icons.zoom_in),
+                onPressed: _zoomIn,
+              ),
+              IconButton(
+                icon: const Icon(Icons.zoom_out),
+                onPressed: _zoomOut,
+              ),
               DropdownMenuItem<String>(
                 value: 'submenu1',
                 child: SubmenuButton(
