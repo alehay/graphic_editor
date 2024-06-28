@@ -69,11 +69,13 @@ class _MyAppState extends State<MyApp> {
   final GlobalKey _imageKey = GlobalKey();
   double _scaleWidth = 1;
   double _scaleHeight = 1;
+  double _offsetX = 0.0;
+  double _offsetY = 0.0;
   bool _isDrawing = false; // State variable to track drawing mode
 
   double _scale = 1.0;
   final TransformationController _transformationController =
-  TransformationController();
+      TransformationController();
 
   Future<void> _pickImage(ImageSource source) async {
     var appDir = (await getTemporaryDirectory()).path;
@@ -148,28 +150,32 @@ class _MyAppState extends State<MyApp> {
   void _moveLeft() {
     final Matrix4 currentMatrix = _transformationController.value;
     final Offset translation = Offset(50.0 / _scale, 0);
-    final Matrix4 newMatrix = Matrix4.copy(currentMatrix)..translate(translation.dx, translation.dy);
+    final Matrix4 newMatrix = Matrix4.copy(currentMatrix)
+      ..translate(translation.dx, translation.dy);
     _transformationController.value = newMatrix;
   }
 
   void _moveRight() {
     final Matrix4 currentMatrix = _transformationController.value;
     final Offset translation = Offset(-50.0 / _scale, 0);
-    final Matrix4 newMatrix = Matrix4.copy(currentMatrix)..translate(translation.dx, translation.dy);
+    final Matrix4 newMatrix = Matrix4.copy(currentMatrix)
+      ..translate(translation.dx, translation.dy);
     _transformationController.value = newMatrix;
   }
 
   void _moveUp() {
     final Matrix4 currentMatrix = _transformationController.value;
     final Offset translation = Offset(0, 50.0 / _scale);
-    final Matrix4 newMatrix = Matrix4.copy(currentMatrix)..translate(translation.dx, translation.dy);
+    final Matrix4 newMatrix = Matrix4.copy(currentMatrix)
+      ..translate(translation.dx, translation.dy);
     _transformationController.value = newMatrix;
   }
 
   void _moveDown() {
     final Matrix4 currentMatrix = _transformationController.value;
     final Offset translation = Offset(0, -50.0 / _scale);
-    final Matrix4 newMatrix = Matrix4.copy(currentMatrix)..translate(translation.dx, translation.dy);
+    final Matrix4 newMatrix = Matrix4.copy(currentMatrix)
+      ..translate(translation.dx, translation.dy);
     _transformationController.value = newMatrix;
   }
 
@@ -190,7 +196,7 @@ class _MyAppState extends State<MyApp> {
   Future<void> _processImage(String key) async {
     final tempDir = await getTemporaryDirectory();
     final randomName =
-    _generateRandomName(10); // Generate a 10 character random name
+        _generateRandomName(10); // Generate a 10 character random name
     final processedImagePath = '${tempDir.path}/$randomName.jpg';
     final processImage = await _image!.copy(processedImagePath);
 
@@ -224,8 +230,9 @@ class _MyAppState extends State<MyApp> {
   ffi.Pointer<ffi.Float> _convertPointsToNative(List<Offset> points) {
     final pointer = calloc<ffi.Float>(points.length * 2);
     for (int i = 0; i < points.length; i++) {
-      pointer[i * 2] = points[i].dx * _scaleWidth;
-      pointer[i * 2 + 1] = points[i].dy * _scaleWidth;
+      // Apply both scale and offset
+      pointer[i * 2] = (points[i].dx * _scale + _offsetX) * _scaleWidth;
+      pointer[i * 2 + 1] = (points[i].dy * _scale + _offsetY) * _scaleWidth;
     }
     return pointer;
   }
@@ -275,13 +282,18 @@ class _MyAppState extends State<MyApp> {
             onInteractionUpdate: (details) {
               setState(() {
                 _scale = _transformationController.value.getMaxScaleOnAxis();
+                final translation =
+                    _transformationController.value.getTranslation();
+                _offsetX = translation.x;
+                _offsetY = translation.y;
               });
             },
             child: GestureDetector(
               onPanUpdate: (details) {
                 if (_isDrawing) {
                   RenderBox renderBox = context.findRenderObject() as RenderBox;
-                  Offset localPosition = renderBox.globalToLocal(details.localPosition);
+                  Offset localPosition =
+                      renderBox.globalToLocal(details.localPosition);
                   _addPoint(localPosition / _scale);
                 }
               },
@@ -332,7 +344,6 @@ class _MyAppState extends State<MyApp> {
                   IconButton(
                     icon: Icon(Icons.arrow_back),
                     onPressed: _moveLeft,
-
                   ),
                 ],
               ),
@@ -448,7 +459,6 @@ class _MyAppState extends State<MyApp> {
             ],
           ),
         ),
-
       ),
     );
   }
