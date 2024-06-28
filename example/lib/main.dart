@@ -145,6 +145,34 @@ class _MyAppState extends State<MyApp> {
     }
   }
 
+  void _moveLeft() {
+    final Matrix4 currentMatrix = _transformationController.value;
+    final Offset translation = Offset(50.0 / _scale, 0);
+    final Matrix4 newMatrix = Matrix4.copy(currentMatrix)..translate(translation.dx, translation.dy);
+    _transformationController.value = newMatrix;
+  }
+
+  void _moveRight() {
+    final Matrix4 currentMatrix = _transformationController.value;
+    final Offset translation = Offset(-50.0 / _scale, 0);
+    final Matrix4 newMatrix = Matrix4.copy(currentMatrix)..translate(translation.dx, translation.dy);
+    _transformationController.value = newMatrix;
+  }
+
+  void _moveUp() {
+    final Matrix4 currentMatrix = _transformationController.value;
+    final Offset translation = Offset(0, 50.0 / _scale);
+    final Matrix4 newMatrix = Matrix4.copy(currentMatrix)..translate(translation.dx, translation.dy);
+    _transformationController.value = newMatrix;
+  }
+
+  void _moveDown() {
+    final Matrix4 currentMatrix = _transformationController.value;
+    final Offset translation = Offset(0, -50.0 / _scale);
+    final Matrix4 newMatrix = Matrix4.copy(currentMatrix)..translate(translation.dx, translation.dy);
+    _transformationController.value = newMatrix;
+  }
+
   @override
   void dispose() {
     DefaultCacheManager().emptyCache();
@@ -253,8 +281,7 @@ class _MyAppState extends State<MyApp> {
               onPanUpdate: (details) {
                 if (_isDrawing) {
                   RenderBox renderBox = context.findRenderObject() as RenderBox;
-                  Offset localPosition =
-                  renderBox.globalToLocal(details.localPosition);
+                  Offset localPosition = renderBox.globalToLocal(details.localPosition);
                   _addPoint(localPosition / _scale);
                 }
               },
@@ -289,6 +316,43 @@ class _MyAppState extends State<MyApp> {
               IconButton(
                 icon: const Icon(Icons.zoom_out),
                 onPressed: _zoomOut,
+              ),
+              Row(
+                mainAxisAlignment: MainAxisAlignment.center,
+                children: [
+                  IconButton(
+                    icon: Icon(Icons.arrow_upward),
+                    onPressed: _moveUp,
+                  ),
+                ],
+              ),
+              Row(
+                mainAxisAlignment: MainAxisAlignment.center,
+                children: [
+                  IconButton(
+                    icon: Icon(Icons.arrow_back),
+                    onPressed: _moveLeft,
+
+                  ),
+                ],
+              ),
+              Row(
+                mainAxisAlignment: MainAxisAlignment.center,
+                children: [
+                  IconButton(
+                    icon: Icon(Icons.arrow_forward),
+                    onPressed: _moveRight,
+                  ),
+                ],
+              ),
+              Row(
+                mainAxisAlignment: MainAxisAlignment.center,
+                children: [
+                  IconButton(
+                    icon: Icon(Icons.arrow_downward),
+                    onPressed: _moveDown,
+                  ),
+                ],
               ),
               DropdownMenuItem<String>(
                 value: 'submenu1',
@@ -335,9 +399,7 @@ class _MyAppState extends State<MyApp> {
                   ],
                 ),
               ),
-
               SizedBox(height: 6), // Add some spacing between the buttons
-
               DropdownMenuItem<String>(
                 value: 'submenu1',
                 child: SubmenuButton(
@@ -386,6 +448,7 @@ class _MyAppState extends State<MyApp> {
             ],
           ),
         ),
+
       ),
     );
   }
