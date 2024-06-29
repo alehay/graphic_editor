@@ -26,6 +26,7 @@ include_directories(${DART_SDK}/include)
 
 file (GLOB SRC_FILES
         ../src/graphics.cpp
+        ../src/aroundFilter.cpp
 
 
 

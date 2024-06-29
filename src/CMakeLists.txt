@@ -7,6 +7,7 @@ project(graphics_library VERSION 0.0.1 LANGUAGES C)
 
 add_library(graphics SHARED
   "graphics.cpp"
+  "aroundFilter.cpp"
 )
 
 set_target_properties(graphics PROPERTIES

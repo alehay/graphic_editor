@@ -37,6 +37,7 @@
         "cinttypes": "cpp",
         "typeinfo": "cpp",
         "__verbose_abort": "cpp",
-        "execution": "cpp"
+        "execution": "cpp",
+        "ostream": "cpp"
     }
 }

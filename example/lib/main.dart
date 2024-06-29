@@ -213,6 +213,46 @@ class _MyAppState extends State<MyApp> {
       result = graphics.processImageWithPoints(
           imagePathPointer, pointsPointer, _points.length);
     }
+
+    if (key == "BLUR") {
+      result = graphics.processImageGaussianBlur(
+          imagePathPointer, pointsPointer, _points.length, 3);
+    }
+
+    if (key == "GRUB_CUT") {
+      result = graphics.processImageGrabcut(
+          imagePathPointer, pointsPointer, _points.length, 3);
+    }
+
+    if (key == "GRUB_CUT_FOREGRAUND") {
+      result = graphics.processImageGrabcutWhiteForeground(
+          imagePathPointer, pointsPointer, _points.length, 3);
+    }
+
+    if (key == "SEPIA") {
+      result = graphics.processImageSepia(
+          imagePathPointer, pointsPointer, _points.length, 3);
+    }
+
+    if (key == "VIGNETTE") {
+      result = graphics.processImageVignette(
+          imagePathPointer, pointsPointer, _points.length, 3);
+    }
+
+    if (key == "SHARPEN") {
+      result = graphics.processImageSharpen(
+          imagePathPointer, pointsPointer, _points.length, 3);
+    }
+
+    if (key == "EMBOSS") {
+      result = graphics.processImageEmboss(
+          imagePathPointer, pointsPointer, _points.length, 3);
+    }
+    if (key == "CARTOON") {
+      result = graphics.processImageCartoon(
+          imagePathPointer, pointsPointer, _points.length, 3);
+    }
+
     calloc.free(imagePathPointer);
     calloc.free(pointsPointer);
     final temp = _image!;
@@ -400,11 +440,107 @@ class _MyAppState extends State<MyApp> {
                         children: [
                           Icon(Icons.star, size: 20),
                           SizedBox(width: 8),
-                          Text('Option 1.2'),
+                          Text('gaussian blur'),
                         ],
                       ),
                       onPressed: () {
-                        // Handle Option 1.2
+                        _processImage("BLUR");
+                      },
+                    ),
+                    MenuItemButton(
+                      style: ButtonStyle(
+                        padding: MaterialStateProperty.all(EdgeInsets.zero),
+                      ),
+                      child: Row(
+                        mainAxisSize: MainAxisSize.min,
+                        children: [
+                          Icon(Icons.star, size: 20),
+                          SizedBox(width: 8),
+                          Text('grab_cut'),
+                        ],
+                      ),
+                      onPressed: () {
+                        _processImage("GRUB_CUT");
+                      },
+                    ),
+                    MenuItemButton(
+                      style: ButtonStyle(
+                        padding: MaterialStateProperty.all(EdgeInsets.zero),
+                      ),
+                      child: Row(
+                        mainAxisSize: MainAxisSize.min,
+                        children: [
+                          Icon(Icons.star, size: 20),
+                          SizedBox(width: 8),
+                          Text('sepia'),
+                        ],
+                      ),
+                      onPressed: () {
+                        _processImage("SEPIA");
+                      },
+                    ),
+                    MenuItemButton(
+                      style: ButtonStyle(
+                        padding: MaterialStateProperty.all(EdgeInsets.zero),
+                      ),
+                      child: Row(
+                        mainAxisSize: MainAxisSize.min,
+                        children: [
+                          Icon(Icons.star, size: 20),
+                          SizedBox(width: 8),
+                          Text('Vignette'),
+                        ],
+                      ),
+                      onPressed: () {
+                        _processImage("VIGNETTE");
+                      },
+                    ),
+                    MenuItemButton(
+                      style: ButtonStyle(
+                        padding: MaterialStateProperty.all(EdgeInsets.zero),
+                      ),
+                      child: Row(
+                        mainAxisSize: MainAxisSize.min,
+                        children: [
+                          Icon(Icons.star, size: 20),
+                          SizedBox(width: 8),
+                          Text('Sharpen'),
+                        ],
+                      ),
+                      onPressed: () {
+                        _processImage("SHARPEN");
+                      },
+                    ),
+                    MenuItemButton(
+                      style: ButtonStyle(
+                        padding: MaterialStateProperty.all(EdgeInsets.zero),
+                      ),
+                      child: Row(
+                        mainAxisSize: MainAxisSize.min,
+                        children: [
+                          Icon(Icons.star, size: 20),
+                          SizedBox(width: 8),
+                          Text('Emboss'),
+                        ],
+                      ),
+                      onPressed: () {
+                        _processImage("EMBOSS");
+                      },
+                    ),
+                    MenuItemButton(
+                      style: ButtonStyle(
+                        padding: MaterialStateProperty.all(EdgeInsets.zero),
+                      ),
+                      child: Row(
+                        mainAxisSize: MainAxisSize.min,
+                        children: [
+                          Icon(Icons.star, size: 20),
+                          SizedBox(width: 8),
+                          Text('Cartoon'),
+                        ],
+                      ),
+                      onPressed: () {
+                        _processImage("CARTOON");
                       },
                     ),
                   ],

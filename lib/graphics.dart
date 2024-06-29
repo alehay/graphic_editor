@@ -161,3 +161,131 @@ final DProcessImageWithPointsGrayScale processImageWithPointsGrayScale = _dylib
     .lookup<NativeFunction<CProcessImageWithPointsGrayScale>>(
         "process_image_gray_scale")
     .asFunction();
+
+typedef CProcessImageGaussianBlur = Int32 Function(
+    Pointer<Utf8>, Pointer<Float>, Int32, Int32);
+
+// Dart function signature typedef
+typedef DProcessImageGaussianBlur = int Function(
+    Pointer<Utf8>, Pointer<Float>, int, int);
+
+// Function lookup and conversion to Dart function
+final DProcessImageGaussianBlur processImageGaussianBlur = _dylib
+    .lookup<NativeFunction<CProcessImageGaussianBlur>>(
+        'process_image_gaussian_blur')
+    .asFunction();
+
+// C function signature typedef
+typedef CProcessImageEdgeDetection = Int32 Function(
+    Pointer<Utf8>, Pointer<Float>, Int32, Int32);
+
+// Dart function signature typedef
+typedef DProcessImageEdgeDetection = int Function(
+    Pointer<Utf8>, Pointer<Float>, int, int);
+
+// Function lookup and conversion to Dart function
+final DProcessImageEdgeDetection processImageEdgeDetection = _dylib
+    .lookup<NativeFunction<CProcessImageEdgeDetection>>(
+        'process_image_edge_detection')
+    .asFunction();
+
+// C function signature typedef
+typedef CProcessImageEnhancedEdgeDetection = Int32 Function(
+    Pointer<Utf8>, Pointer<Float>, Int32, Int32);
+
+// Dart function signature typedef
+typedef DProcessImageEnhancedEdgeDetection = int Function(
+    Pointer<Utf8>, Pointer<Float>, int, int);
+
+// Function lookup and conversion to Dart function
+final DProcessImageEnhancedEdgeDetection processImageEnhancedEdgeDetection =
+    _dylib
+        .lookup<NativeFunction<CProcessImageEnhancedEdgeDetection>>(
+            'process_image_enhanced_edge_detection')
+        .asFunction();
+
+// C function signature typedef
+typedef CProcessImageGradientMagnitude = Int32 Function(
+    Pointer<Utf8>, Pointer<Float>, Int32, Int32);
+
+// Dart function signature typedef
+typedef DProcessImageGradientMagnitude = int Function(
+    Pointer<Utf8>, Pointer<Float>, int, int);
+
+// Function lookup and conversion to Dart function
+final DProcessImageGradientMagnitude processImageGradientMagnitude = _dylib
+    .lookup<NativeFunction<CProcessImageGradientMagnitude>>(
+        'process_image_gradient_magnitude')
+    .asFunction();
+
+typedef CProcessImageGrabcut = Int32 Function(
+    Pointer<Utf8>, Pointer<Float>, Int32, Int32);
+
+typedef DProcessImageGrabcut = int Function(
+    Pointer<Utf8>, Pointer<Float>, int, int);
+
+final DProcessImageGrabcut processImageGrabcut = _dylib
+    .lookup<NativeFunction<CProcessImageGrabcut>>('process_image_grabcut')
+    .asFunction();
+
+typedef CProcessImageGrabcutWhiteForeground = Int32 Function(
+    Pointer<Utf8>, Pointer<Float>, Int32, Int32);
+
+typedef DProcessImageGrabcutWhiteForeground = int Function(
+    Pointer<Utf8>, Pointer<Float>, int, int);
+
+final DProcessImageGrabcutWhiteForeground processImageGrabcutWhiteForeground =
+    _dylib
+        .lookup<NativeFunction<CProcessImageGrabcutWhiteForeground>>(
+            'process_image_grabcut_white_foreground')
+        .asFunction();
+
+typedef CProcessImageSepia = Int32 Function(
+    Pointer<Utf8>, Pointer<Float>, Int32, Int32);
+
+typedef CProcessImageVignette = Int32 Function(
+    Pointer<Utf8>, Pointer<Float>, Int32, Int32);
+
+typedef CProcessImageSharpen = Int32 Function(
+    Pointer<Utf8>, Pointer<Float>, Int32, Int32);
+
+typedef CProcessImageEmboss = Int32 Function(
+    Pointer<Utf8>, Pointer<Float>, Int32, Int32);
+
+typedef CProcessImageCartoon = Int32 Function(
+    Pointer<Utf8>, Pointer<Float>, Int32, Int32);
+
+typedef DProcessImageSepia = int Function(
+    Pointer<Utf8>, Pointer<Float>, int, int);
+
+typedef DProcessImageVignette = int Function(
+    Pointer<Utf8>, Pointer<Float>, int, int);
+
+typedef DProcessImageSharpen = int Function(
+    Pointer<Utf8>, Pointer<Float>, int, int);
+
+typedef DProcessImageEmboss = int Function(
+    Pointer<Utf8>, Pointer<Float>, int, int);
+
+typedef DProcessImageCartoon = int Function(
+    Pointer<Utf8>, Pointer<Float>, int, int);
+
+final DProcessImageSepia processImageSepia = _dylib
+    .lookup<NativeFunction<CProcessImageSepia>>('process_image_sepia')
+    .asFunction();
+
+final DProcessImageVignette processImageVignette = _dylib
+    .lookup<NativeFunction<CProcessImageVignette>>('process_image_vignette')
+    .asFunction();
+
+final DProcessImageSharpen processImageSharpen = _dylib
+    .lookup<NativeFunction<CProcessImageSharpen>>('process_image_sharpen')
+    .asFunction();
+
+final DProcessImageEmboss processImageEmboss = _dylib
+    .lookup<NativeFunction<CProcessImageEmboss>>('process_image_emboss')
+    .asFunction();
+
+final DProcessImageCartoon processImageCartoon = _dylib
+    .lookup<NativeFunction<CProcessImageCartoon>>('process_image_cartoon')
+    .asFunction();
